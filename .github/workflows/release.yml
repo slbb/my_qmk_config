@@ -11,8 +11,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup qmk
-        shell: msys2bash
+        shell: bash
         run: |
-          pacman -Qq
-      # - name: Compile
+          /c/msys64/mingw64.exe ./setup.sh
+      - name: Compile
+        shell: bash
+        run: |
+          /c/msys64/mingw64.exe ./compile.sh
       # - name: Release
