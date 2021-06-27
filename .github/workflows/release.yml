@@ -6,29 +6,28 @@ on:
 jobs:
   build:
     name: Release
-    runs-on: windows-latest
-    defaults:
-      run:
-        shell: msys2 {0}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup qmk
-        uses: msys2/setup-msys2@v2
         with:
-          release: false
-        run: |
-          pacman --needed --noconfirm --disable-download-timeout -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-python3-pip
-          python3 -m pip install qmk
-          cd ./qmk_firmware
-          qmk setup
+          submodules: recursive
       - name: Compile
         shell: bash
         run: |
-          qmk json2c mykeymap.json
-          mkdir ./qmk_firmware/keyboards/wheatfield/split75/bx
-          mv ./keymap.c ./qmk_firmware/keyboards/wheatfield/split75/bx/keymap.c
-          mv ./rules.mk ./qmk_firmware/keyboards/wheatfield/split75/bx/rules.mk
+          export QMK_HOME=$(pwd)/qmk_firmware
+          echo "set QMK_HOME to $QMK_HOME"
+          pip3 install qmk
+          qmk setup -y
+          echo "convert .json to .c file"
+          qmk json2c mykeymap.json -o keymap.c
+          echo "create config dir"
+          configDir=$QMK_HOME/keyboards/wheatfield/split75/keymaps/bx
+          mkdir $configDir
+          echo "move files to config dir"
+          mv keymap.c $configDir/keymap.c
+          mv rules.mk $configDir/rules.mk
+          echo "compile hex"
           qmk compile -kb wheatfield/split75 -km bx
-          ls
+          echo $(ls)
       # - name: Release
