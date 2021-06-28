@@ -1,8 +1,8 @@
 name: Release
 on:
   push:
-    branches:
-      - master
+    tags:
+      - "v*"
 jobs:
   build:
     name: Release
@@ -30,4 +30,10 @@ jobs:
           echo "compile hex"
           qmk compile -kb wheatfield/split75 -km bx
           echo $(ls)
-      # - name: Release
+      - name: Create Github Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            qmk_firmware/*.hex
