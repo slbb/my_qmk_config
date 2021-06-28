@@ -29,11 +29,11 @@ jobs:
           mv rules.mk $configDir/rules.mk
           echo "compile hex"
           qmk compile -kb wheatfield/split75 -km bx
-          echo $(ls)
       - name: Create Github Release
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: latest
           prerelease: false
           files: |
             qmk_firmware/*.hex
